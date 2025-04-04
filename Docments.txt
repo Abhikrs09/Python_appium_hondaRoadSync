@@ -1,0 +1,115 @@
+from appium.webdriver.common.touch_action import TouchAction
+from appium.webdriver.common.multi_action import MultiAction
+from appium.webdriver.common.mobileby import MobileBy
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+class MobileActions:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def tap(self, x, y):
+        action = TouchAction(self.driver)
+        action.tap(x=x, y=y).perform()
+
+    def long_press(self, element, duration=2000):
+        action = TouchAction(self.driver)
+        action.long_press(element, duration=duration).release().perform()
+
+    def swipe(self, start_x, start_y, end_x, end_y, duration=800):
+        action = TouchAction(self.driver)
+        action.press(x=start_x, y=start_y).wait(duration).move_to(x=end_x, y=end_y).release().perform()
+
+    def scroll(self, start_x, start_y, end_x, end_y):
+        self.swipe(start_x, start_y, end_x, end_y, duration=1000)
+
+    def drag_and_drop(self, source_element, target_element):
+        action = TouchAction(self.driver)
+        action.long_press(source_element).move_to(target_element).release().perform()
+
+    def handle_alert(self):
+        try:
+            alert = self.driver.switch_to.alert
+            alert.accept()
+        except Exception as e:
+            print("No alert found", e)
+
+    def pinch_in(self, x, y, distance=100):
+        """
+        Perform a pinch-in (zoom-out) gesture at specified coordinates.
+
+        :param x: X-coordinate of the center point.
+        :param y: Y-coordinate of the center point.
+        :param distance: Distance between the fingers (default 100 pixels).
+        """
+        action1 = TouchAction(self.driver).press(x=x, y=y - distance).move_to(x=x, y=y).release()
+        action2 = TouchAction(self.driver).press(x=x, y=y + distance).move_to(x=x, y=y).release()
+
+        multi_action = MultiAction(self.driver)
+        multi_action.add(action1, action2)
+        multi_action.perform()
+
+    def pinch_out(self, x, y, distance=100):
+        """
+        Perform a pinch-out (zoom-in) gesture at specified coordinates.
+
+        :param x: X-coordinate of the center point.
+        :param y: Y-coordinate of the center point.
+        :param distance: Distance between the fingers (default 100 pixels).
+        """
+        action1 = TouchAction(self.driver).press(x=x, y=y).move_to(x=x, y=y - distance).release()
+        action2 = TouchAction(self.driver).press(x=x, y=y).move_to(x=x, y=y + distance).release()
+
+        multi_action = MultiAction(self.driver)
+        multi_action.add(action1, action2)
+        multi_action.perform()
+
+    def wait_for_element(self, locator_type, locator_value, timeout=10):
+        """
+        Wait for an element to be visible.
+
+        :param locator_type: Type of locator (e.g., MobileBy.ID, MobileBy.XPATH)
+        :param locator_value: Locator value.
+        :param timeout: Maximum time to wait (default 10 seconds).
+        """
+        return WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located((locator_type, locator_value))
+        )
+
+    def click(self, locator_type, locator_value):
+        element = self.wait_for_element(locator_type, locator_value)
+        element.click()
+
+    def fill_text(self, locator_type, locator_value, text):
+        element = self.wait_for_element(locator_type, locator_value)
+        element.clear()
+        element.send_keys(text)
+
+    def is_element_visible(self, locator_type, locator_value, timeout=10):
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.visibility_of_element_located((locator_type, locator_value))
+            )
+            return True
+        except:
+            return False
+
+    def is_element_displayed(self, element):
+        try:
+            return element.is_displayed()
+        except:
+            return False
+
+    def is_element_clickable(self, locator_type, locator_value, timeout=10):
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.element_to_be_clickable((locator_type, locator_value))
+            )
+            return True
+        except:
+            return False
+
+    def scroll_into_view_and_click(self, locator_type, locator_value):
+        element = self.wait_for_element(locator_type, locator_value)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+        element.click()
