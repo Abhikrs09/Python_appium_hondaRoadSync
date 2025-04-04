@@ -2,113 +2,94 @@
 
 ### Clone the project
 
-```
-git clone https://github.com/BhuwanPandey/automation-test-python
-cd automation-test-python
+```sh
+  git clone https://github.com/Abhikrs09/Python_appium_hondaRoadSync.git
+  cd automation-test-python
 ```
 
 ### Create and activate a virtual environment
 
-```
-python -m venv .venv
-.venv/scripts/activate
+```sh
+  python -m venv .venv
+  .venv/scripts/activate
 ```
 
 ### Install Project Dependencies
 
-```
-pip install -r requirements.txt
+```sh
+  pip install -r requirements.txt
 ```
 
 ## Setup Tools
-Before running test, It is neccessary to setup different tools.
-- [Mobileapp](https://github.com/saucelabs/sample-app-mobile/releases) `This is test mobileapp` From where you can download testmobile application.
-    -    After downloading, move that apk file inside `src` directory and renamed to `sample.apk`
-- [Appium](https://appium.io/docs/en/latest/quickstart/install/) `To Perform Automation test on MobileApp` <br>
-    -   [ ] You can either follow `setup and configuration` steps from respective documentation or follow process mention below: <br>
-        -   Download [Node.js](https://nodejs.org/en) and [npm](https://www.npmjs.com/)  version >=8 (LTS is recommended)
-        -   `Appium` can be installed globally using npm as <br>
-            ```
-            npm install -g appium
-            ```
-    -   [ ] Install the UiAutomator2 Driver
-        -   You can't do much with `Appium` unless you have a driver, which is an interface that allows Appium to automate a particular platform. The driver we're going to use is called the               [UiAutomator2 Driver](https://github.com/appium/appium-uiautomator2-driver).
-        -   In addition to a working `Appium server`, we also need to set up the following:
-            #### Android SDK
-            -  Easiest way to set up the Android SDK requirements is to download [Android Studio](https://developer.android.com/studio)
-            -  Set up the `ANDROID_HOME` environment variable to point to the directory where the Android SDK is installed. Examplepath: `C:\Users\<Username>\AppData\Local\Android\Sdk\`
-            -  For more control over android device and emulator. Use `adb` ADB (Android Debug Bridge) is a command-line tool that allows developers to communicate with Android devices or     
-               emulators.
-            -  Add the path of the `platform-tools` folder to your system's PATH environment variable. Examplepath: `C:\Users\<Username>\AppData\Local\Android\Sdk\platform-tools`
-            -  Common ADB Commands
-                ```
-                # List Connected Devices
-                adb devices
-                # Install an APK
-                adb install <path-to-apk>
-                # Access Device Shell
-                adb shell
-                ```
+Before running tests, it is necessary to set up different tools.
 
-            #### Java JDK
-            -  Install the `Java JDK` and You can download this from [Oracle](https://jdk.java.net/). Make sure you get the `JDK` and `not the JRE`.
-            -  Set up the `JAVA_HOME` environment variable to point to the JDK home directory. Examplepath: `C:\ProgramFiles\Java\jdk-23\`
+### Mobile App
+- Download the test mobile app from [here](https://play.google.com/store/apps/details?id=com.honda.ms.dm.sab&hl=en).
+- Move the downloaded APK file inside the `src/` directory and rename it to `honda_roadsync.apk`.
 
-            #### Install the driver
-            -  Before installing, make sure your `Appium server` is not running. Then run the following command:
-              ```
-                appium driver install uiautomator2
-              ```
-            #### Validating the Install
-            -  To validate whether all prerequisites have been set up correctly,
-              ```
-              # Install doctor
-              appium driver install doctor
-              # Validating
-              # Note: It might raise some warning but it's okay 
-              appium driver doctor uiautomator2
-              ```
-- [Appium Inspector](https://github.com/appium/appium-inspector/releases)  `A GUI inspector for mobile app` <br>
-  -  [ ] Features
-      -  Specify the Appium server details
-      -  Interact with the app screenshot
-      -  Search for elements and interact with them
-
-### Slack Connection
-- [slack webhook](https://api.slack.com/messaging/webhooks)  `Slack Webhook API` <br>
-  - Follow above link to create incomming webhook
-  - After getting key, create .env file to store webhook api as
+### Appium Installation
+- Install Node.js and npm (version >=8, LTS recommended) from [Node.js](https://nodejs.org/en) and [npm](https://www.npmjs.com/).
+- Install Appium globally:
+  ```sh
+  npm install -g appium
   ```
-  SLACK_WEBHOOK_URL=
+- Install the UiAutomator2 driver:
+  ```sh
+  appium driver install uiautomator2
+  ```
+- Validate the setup:
+  ```sh
+  appium driver install doctor
+  appium driver doctor uiautomator2
   ```
 
+### Android SDK Setup
+- Download and install [Android Studio](https://developer.android.com/studio).
+- Set up the `ANDROID_HOME` environment variable to point to the Android SDK installation directory.
+- Add the `platform-tools` directory to your system's PATH.
+- Common ADB commands:
+  ```sh
+  adb devices  # List connected devices
+  adb install <path-to-apk>  # Install an APK
+  adb shell  # Access device shell
+  ```
 
-## 🏃‍♂️ Run the  Testcase
-After installing all the required tools, Now do the following
-- Open android studio emulator to see overall test interaction
-- Run `appium server` in separate console and execute the below command to perform automation test
+### Java JDK Setup
+- Install [Java JDK](https://jdk.java.net/) and set up the `JAVA_HOME` environment variable.
+
+### Appium Inspector
+- Download [Appium Inspector](https://github.com/appium/appium-inspector/releases) to inspect mobile app elements.
+
+## 🔔 Slack Integration
+- Generate a Slack Webhook URL from [Slack Webhooks](https://api.slack.com/messaging/webhooks).
+- Store the webhook in a `.env` file:
+  ```sh
+  SLACK_WEBHOOK_URL=<your-webhook-url>
+  ```
+
+## 🏃‍♂️ Running Tests
+
+### Run Test Cases
+- Start an Android emulator.
+- Start the Appium server in a separate terminal.
+- Run tests:
+  ```sh
+  pytest -x -v
+  ```
+
+### Run Tests with Logs
+- To run tests with log output:
+  ```sh
+  pytest --log-cli-level=INFO
+  ```
+  OR
+  ```sh
+  pytest -s --capture=no
+  ```
+
+### Generate Allure Report
+- Run tests with Allure reporting:
+  ```sh
+  pytest --alluredir=reportallure
+  allure serve reportallure
   
-  ```
-    pytest -x -v 
-  ```
-  
-
-## 🏃‍♂️ Run the  Testcase with log files in the console
-
-- To Run the Testcases with the log files 
-  
-  ```
-    pytest --log-cli-level=INFO
-              or 
-    pytest -s --capture=no
-  ```
-
-
-## Allure report 
-  - Featch report using Allure Report 
-
-    ```
-    pytest --alluredir=reportallure
-    allure serve .\reportallure\
-  ```
-
